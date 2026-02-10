@@ -641,6 +641,158 @@ class Counter {
 }
 ```
 
+## What's New in TypeScript 5.8 & 5.9
+
+This tutorial uses **TypeScript ~5.9** — here are the most relevant new features for React developers.
+
+### TypeScript 5.8 (February 2025)
+
+#### Run TypeScript Directly in Node.js
+
+With the `--erasableSyntaxOnly` flag, Node.js 23.6+ can execute TypeScript files **directly** — no compilation step needed:
+
+```bash
+# Run TypeScript directly (Node.js 23.6+)
+node --experimental-strip-types myScript.ts
+```
+
+```typescript
+// This works when syntax is "erasable" (types only, no enums or decorators)
+function greet(name: string): string {
+  return `Hello, ${name}`;
+}
+
+// Node.js strips the type annotations and runs the JavaScript
+console.log(greet("World"));
+```
+
+**C# Analogy**: Like running C# scripts with `dotnet-script` — quick execution without a full build pipeline.
+
+> **Note**: For React apps built with Vite, you still use the normal build pipeline. This feature is great for scripts, tools, and quick prototyping.
+
+#### Improved Module Interop
+
+TypeScript 5.8 improved ESM/CJS interoperability with `--module nodenext`:
+
+```typescript
+// You can now require() ESM modules from CJS files
+// under --module nodenext
+const { helper } = require('./esm-module');
+```
+
+#### Better Return Type Checking
+
+More granular type checking in conditional return expressions catches bugs earlier:
+
+```typescript
+function processValue(value: string | number): string {
+  // TS 5.8 catches subtle type errors in branches like this
+  return typeof value === 'string'
+    ? value.toUpperCase()
+    : value.toFixed(2);  // Correctly inferred as string
+}
+```
+
+### TypeScript 5.9 (August 2025)
+
+#### `import defer` — Lazy Module Loading
+
+The headline feature: **deferred module imports** that delay execution until the module is actually used:
+
+```typescript
+// Traditional import — module executes immediately when this file loads
+import { heavyComputation } from './analytics';
+
+// Deferred import — module only executes when you first access an export
+import defer * as analytics from './analytics';
+
+// The analytics module hasn't executed yet!
+console.log('App started');
+
+// NOW it executes (on first property access)
+analytics.heavyComputation(data);
+```
+
+**Why this matters for React**:
+- Reduce initial bundle execution time
+- Defer expensive initialization (chart libraries, date formatters, etc.)
+- Better control over when side effects run
+
+**C# Analogy**: Like `Lazy<T>` in .NET:
+
+```csharp
+// C# equivalent concept
+private Lazy<AnalyticsService> _analytics = new(() => new AnalyticsService());
+
+// Only instantiated on first access
+_analytics.Value.HeavyComputation(data);
+```
+
+#### Streamlined `tsc --init`
+
+The generated `tsconfig.json` is now **minimal and clean** instead of a wall of commented-out options:
+
+```bash
+# Before (TS 5.8): 100+ lines of commented options
+tsc --init
+
+# After (TS 5.9): Clean, minimal config
+tsc --init
+```
+
+```json
+{
+  "compilerOptions": {
+    "target": "es2016",
+    "module": "commonjs",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  }
+}
+```
+
+#### `--module node20`
+
+A stable module resolution option for Node.js 20:
+
+```json
+{
+  "compilerOptions": {
+    "module": "node20",
+    "moduleResolution": "node20"
+  }
+}
+```
+
+#### Expandable Hovers in Editors
+
+VS Code now shows `+` and `−` buttons on type hovers to expand/collapse complex types:
+
+```typescript
+// Hover over 'user' to see the type
+// Click + to expand nested types, - to collapse
+const user: ComplexUserType = getUser();
+//    ↑ Hover here → shows summary, click + for full type details
+```
+
+This is especially useful for deeply nested types like Zod inferred schemas and React component props.
+
+#### Summary Table
+
+| Feature | TS 5.8 | TS 5.9 | C# Analogy |
+|---------|--------|--------|------------|
+| **Direct Node.js execution** | ✅ `--erasableSyntaxOnly` | — | `dotnet-script` |
+| **ESM/CJS interop** | ✅ Improved | — | Assembly loading |
+| **Return type checking** | ✅ Granular branches | — | Flow analysis |
+| **`import defer`** | — | ✅ | `Lazy<T>` |
+| **Minimal `tsc --init`** | — | ✅ | `dotnet new console` |
+| **`--module node20`** | — | ✅ | Target framework |
+| **Expandable hovers** | — | ✅ | VS IntelliSense |
+
+---
+
 ## Conclusion
 
 As a C# developer, you have a huge head start with TypeScript! The languages share:
@@ -655,6 +807,8 @@ The main differences are:
 - No method overloading (use union types instead)
 - Different runtime (JavaScript vs .NET)
 - Array methods instead of LINQ
+
+**What's exciting in 5.8/5.9**: Direct Node.js execution brings TypeScript closer to the "just run it" experience C# developers enjoy with `dotnet run`. The `import defer` syntax gives you `Lazy<T>`-style control over module loading.
 
 **Next Steps**: Start writing TypeScript code! The best way to learn is by doing. Your C# knowledge will transfer beautifully.
 
