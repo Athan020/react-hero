@@ -674,6 +674,54 @@ function Parent() {
 
 ---
 
+## What's New in React 19: The React Compiler
+
+React 19 ships with the **React Compiler** (previously called "React Forget") — it automatically applies the memoization techniques you've learned in this unit at build time.
+
+### What the Compiler Does
+
+The compiler analyses your components and automatically inserts `useMemo`, `useCallback`, and `React.memo` equivalents where they'll help:
+
+```typescript
+// What you write (no manual optimization):
+function ProductList({ products, onSelect }) {
+  const sorted = products.toSorted((a, b) => a.price - b.price);
+  const handleClick = (id) => onSelect(id);
+
+  return sorted.map(p => (
+    <ProductCard key={p.id} product={p} onClick={() => handleClick(p.id)} />
+  ));
+}
+
+// What the compiler outputs (roughly):
+function ProductList({ products, onSelect }) {
+  const sorted = useMemo(
+    () => products.toSorted((a, b) => a.price - b.price),
+    [products]
+  );
+  const handleClick = useCallback((id) => onSelect(id), [onSelect]);
+
+  return sorted.map(p => (
+    <MemoizedProductCard key={p.id} product={p} onClick={() => handleClick(p.id)} />
+  ));
+}
+```
+
+### Should You Still Learn Manual Optimization?
+
+**Yes, absolutely.** Understanding `useMemo`, `useCallback`, and `React.memo` remains essential because:
+
+1. **The compiler is opt-in** — not all projects use it yet
+2. **Understanding WHY** helps you write compiler-friendly code
+3. **Debugging** — when something isn't optimized, knowing the fundamentals helps
+4. **Legacy codebases** — older projects won't have the compiler
+
+Think of it like knowing manual vs. automatic transmission — the automatic (compiler) handles most situations, but understanding the manual (hooks) makes you a better driver.
+
+> 📖 **Deep Dive**: See [Unit 11: React 19 Features](../unit-11-react19-features/README.md) for full coverage of the React Compiler, including setup and the rules it enforces.
+
+---
+
 ## Further Reading
 
 - [React Docs: Optimizing Performance](https://react.dev/learn/render-and-commit)

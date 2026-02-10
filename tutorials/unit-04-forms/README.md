@@ -1551,6 +1551,66 @@ useEffect(() => {
 
 ---
 
+## What's New in React 19: Form Actions
+
+React 19 introduces **Actions** — a built-in way to handle form submissions that eliminates much of the manual state management shown above.
+
+### Before (React 18 — what this unit teaches)
+
+```typescript
+function ContactForm() {
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    setIsPending(true);
+    setError(null);
+    try {
+      const formData = new FormData(e.target as HTMLFormElement);
+      await submitToServer(Object.fromEntries(formData));
+    } catch (err) {
+      setError('Something went wrong');
+    } finally {
+      setIsPending(false);
+    }
+  }
+
+  return <form onSubmit={handleSubmit}>...</form>;
+}
+```
+
+### After (React 19 — Actions)
+
+```typescript
+import { useActionState } from 'react';
+
+async function submitAction(prevState: any, formData: FormData) {
+  try {
+    await submitToServer(Object.fromEntries(formData));
+    return { success: true, message: 'Sent!' };
+  } catch {
+    return { success: false, message: 'Something went wrong' };
+  }
+}
+
+function ContactForm() {
+  const [state, formAction, isPending] = useActionState(submitAction, null);
+
+  // No manual useState for loading/error — React manages it all!
+  return <form action={formAction}>...</form>;
+}
+```
+
+**Key differences**:
+- `action={formAction}` replaces `onSubmit={handleSubmit}`
+- No manual `isPending` / `setError` state — `useActionState` handles it
+- `useFormStatus()` gives child components access to the form's pending state without prop drilling
+
+> 📖 **Deep Dive**: See [Unit 11: React 19 Features](../unit-11-react19-features/README.md) for full coverage of Actions, `useOptimistic`, and related hooks.
+
+---
+
 ## Further Reading
 
 - [React Hook Form Documentation](https://react-hook-form.com/)
