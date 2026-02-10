@@ -109,11 +109,29 @@ Combine everything you've learned to build and deploy a production-ready applica
 
 ---
 
+### [Unit 11: React 19 Features](./tutorials/unit-11-react19-features/README.md)
+**Time**: ~3-4 hours | **Level**: Intermediate-Advanced
+
+Master React 19's game-changing features: Actions, `useOptimistic`, `use()` hook, the React Compiler, and Server Components.
+
+**You'll Learn**: The modern React paradigm that eliminates manual optimization boilerplate
+
+---
+
+### [Unit 12: Enterprise Third-Party Libraries](./tutorials/unit-12-enterprise-libraries/README.md)
+**Time**: ~3-4 hours | **Level**: Intermediate-Advanced
+
+Deep-dive into the libraries used in real-world enterprise applications: Zod, date-fns, clsx/CVA, advanced Zustand, error boundaries, and i18n.
+
+**You'll Build**: A production-grade utility layer with validation, date handling, and error recovery
+
+---
+
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-- **Node.js** (v18 or higher) - [Download here](https://nodejs.org/)
+- **Node.js** (v20.19 or higher) - [Download here](https://nodejs.org/)
 - **Basic programming knowledge** (you're a backend dev, you're good!)
 - **Code editor** (VS Code recommended)
 - **Terminal/Command Line** familiarity
@@ -169,9 +187,9 @@ This series leverages your existing knowledge:
 
 ## 🛠️ Tech Stack
 
-- **React 18**: Latest stable version with modern features
-- **TypeScript 5**: Strong typing for better DX
-- **Vite 5**: Lightning-fast build tool and dev server
+- **React 19**: Latest stable version with Actions, `use()` hook, React Compiler, and Server Components
+- **TypeScript ~5.9**: Strong typing with `import defer`, improved editor tooling, and modern module support
+- **Vite 7 (Rolldown)**: Rust-powered bundler for blazing-fast builds — replacing esbuild + Rollup
 - **React Router 6**: De facto routing solution
 - **Vitest**: Vite-native testing framework
 - **React Testing Library**: Best practices for component testing
