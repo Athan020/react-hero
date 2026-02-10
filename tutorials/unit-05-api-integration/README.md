@@ -1449,6 +1449,65 @@ const user = JSON.parse(localStorage.getItem('user') || 'null');
 
 ---
 
+## What's New in React 19: The `use()` Hook
+
+React 19 introduces the `use()` hook — a new way to read Promises and Context directly during render, without `useEffect` or `useState`.
+
+### Before (useEffect pattern)
+
+```typescript
+function UserProfile({ userId }: { userId: string }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    setLoading(true);
+    fetchUser(userId)
+      .then(data => { if (active) setUser(data); })
+      .catch(err => { if (active) setError(err); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [userId]);
+
+  if (loading) return <Spinner />;
+  if (error) return <ErrorMessage error={error} />;
+  return <div>{user?.name}</div>;
+}
+```
+
+### After (React 19 `use()` + Suspense)
+
+```typescript
+import { use, Suspense } from 'react';
+
+function UserProfile({ userPromise }: { userPromise: Promise<User> }) {
+  const user = use(userPromise); // Suspends until resolved
+  return <div>{user.name}</div>;
+}
+
+// Parent provides the promise and the Suspense boundary
+function UserPage({ userId }: { userId: string }) {
+  const userPromise = fetchUser(userId);
+  return (
+    <Suspense fallback={<Spinner />}>
+      <UserProfile userPromise={userPromise} />
+    </Suspense>
+  );
+}
+```
+
+**Key benefits**:
+- No `useState` / `useEffect` / cleanup boilerplate
+- React handles loading states via `<Suspense>` boundaries
+- Error states handled via Error Boundaries
+- Works alongside TanStack Query (which remains the best choice for caching, background refetching, and optimistic updates)
+
+> 📖 **Deep Dive**: See [Unit 11: React 19 Features](../unit-11-react19-features/README.md) for full coverage of the `use()` hook, including reading Context and caching strategies.
+
+---
+
 ## Further Reading
 
 - [TanStack Query Documentation](https://tanstack.com/query/latest)
